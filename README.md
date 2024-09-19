@@ -17,3 +17,4 @@ You may also see any lint errors in the console.
 3. Deletion of task
 4. Filter task based on priority
 5. Search based on task name
+6. Store the tasks in browser local storage
