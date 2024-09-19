@@ -1,4 +1,8 @@
-export const initialState = { list: [] };
+const localList = [];
+for (let i = 0; i < localStorage.length; i++) {
+  localList.push(JSON.parse(localStorage.getItem(localStorage.key(i))));
+}
+export const initialState = { list: localList };
 
 export function reducer(state, action) {
   switch (action.type) {

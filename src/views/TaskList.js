@@ -6,7 +6,7 @@ const TaskList = ({ setCurrView, list, setEditTask }) => {
   const [filter, setFilter] = useState("all");
   const [filteredList, setFilteredList] = useState(list);
   const [search, setSearch] = useState("");
-
+  console.log(list);
   useEffect(() => {
     switch (filter) {
       case "all":
@@ -31,7 +31,7 @@ const TaskList = ({ setCurrView, list, setEditTask }) => {
 
   useEffect(() => {
     const searched = filteredList.filter((t) =>
-      t.name.toLowerCase().includes(search.toLowerCase())
+      t.name?.toLowerCase().includes(search?.toLowerCase())
     );
     setFilteredList(searched);
   }, [search]);
