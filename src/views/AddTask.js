@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 
-function AddTask({ setCurrView, dispatch, editTask }) {
+function AddTask({ setCurrView, dispatch, editTask, validateTaskTitle }) {
   const [task, setTask] = useState({
     name: "",
     desc: "",
     dueBy: "",
     priority: "",
   });
+  const [error, setError] = useState({});
   useEffect(() => {
-    console.log(editTask);
     if (editTask) setTask(editTask);
   }, [editTask]);
 
   const handleAdd = () => {
-    dispatch({ type: "add", payload: task });
-    setTimeout(() => setCurrView("list"), 1000);
+    if (task.name?.length < 1)
+      setError({ field: "name", message: "Invalid Task Name" });
+    else if (task.desc?.length < 1)
+      setError({ field: "desc", message: "Invalid description" });
+    else if (validateTaskTitle(task.name)) {
+      dispatch({ type: "add", payload: task });
+      setTimeout(() => setCurrView("list"), 1000);
+    } else setError({ field: "name", message: "Duplicate Task Name" });
   };
 
   const handleEdit = () => {
@@ -31,7 +37,7 @@ function AddTask({ setCurrView, dispatch, editTask }) {
     dispatch({ type: "delete", payload: task });
     setTimeout(() => setCurrView("list"), 1000);
   };
-
+  const currentDate = new Date().toISOString().slice(0, 16);
   return (
     <div className="bg-[#0000001a] rounded-[1rem] p-5">
       <div className="flex w-full justify-between">
@@ -54,6 +60,9 @@ function AddTask({ setCurrView, dispatch, editTask }) {
           onChange={(e) => setTask({ ...task, name: e.target.value })}
           className="border-[2px] border-[#0000005a] px-3 py-1"
         />
+        {error.field === "name" && (
+          <span className="text-[red]">{error.message}</span>
+        )}
         <textarea
           type="text"
           placeholder="Task Description"
@@ -62,8 +71,12 @@ function AddTask({ setCurrView, dispatch, editTask }) {
           onChange={(e) => setTask({ ...task, desc: e.target.value })}
           className="border-[2px] border-[#0000005a] px-3 py-1"
         />
+        {error.field === "desc" && (
+          <span className="text-[red]">{error.message}</span>
+        )}
         <input
           type="datetime-local"
+          min={currentDate}
           disabled={task.isCompleted}
           value={task.dueBy}
           onChange={(e) => setTask({ ...task, dueBy: e.target.value })}
@@ -107,7 +120,10 @@ function AddTask({ setCurrView, dispatch, editTask }) {
               Add Task
             </button>
           ))}
-        <button className="bg-[green] w-full text-[#fff] m-3 py-1 px-4 rounded-[1rem]">
+        <button
+          className="bg-[green] w-full text-[#fff] m-3 py-1 px-4 rounded-[1rem]"
+          onClick={() => setCurrView("list")}
+        >
           Cancel
         </button>
       </div>
